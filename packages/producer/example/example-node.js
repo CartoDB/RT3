@@ -1,6 +1,12 @@
 const RT3Producer = require('../index-node');
 
-const rt3Producer = new RT3Producer('ws://10.0.32.102:3333');
+if (!process.env.IP) {
+  console.error('----\nPlease, specify RT3 server IP as ENV variable.');
+  console.error('Example: IP=127.0.0.1 npm run node\n----\n');
+  return process.exit(-1);
+}
+
+const rt3Producer = new RT3Producer(`ws://${process.env.ip}:3333`);
 
 let i = 0;
 setInterval(() => {
