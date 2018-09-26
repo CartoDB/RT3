@@ -7,6 +7,7 @@ const ACTION_DELETE = 'delete';
 
 const server = new http.createServer();
 const wss = new WebSocket.Server({ server });
+const metadata = require('./config/metadata');
 
 wss.broadcast = function broadcast(data) {
     wss.clients.forEach(function each(client) {
@@ -19,7 +20,8 @@ wss.broadcast = function broadcast(data) {
 wss.on('connection', function connection(ws, req) {
     const ip = req.connection.remoteAddress;
     debug(`new client - ${ip}`);
-
+    debug('metadata:', metadata);
+    ws.send(generateMetadataMsg(metadata));
     ws.on('message', function incoming(point) {
         point = parseNewPoint(point);
 
@@ -73,5 +75,13 @@ function validateNewPoint(event) {
             event.type &&
             typeof event.type == 'string' &&
             [ACTION_SET, ACTION_DELETE].includes(event.type)
+}
+
+
+function generateMetadataMsg(metadata){
+    return JSON.stringify({
+        type: 'meta',
+        data: metadata,
+    });
 }
 
