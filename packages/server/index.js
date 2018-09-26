@@ -1,7 +1,7 @@
 const http = require('http');
 const WebSocket = require('ws');
 const fixtures = require('./config/fixtures.json')
-const debug = require('debug')('index')
+const debug = require('debug')('app:index')
 
 const server = new http.createServer();
 const wss = new WebSocket.Server({ server });
@@ -16,19 +16,15 @@ wss.broadcast = function broadcast(data) {
 };
 
 wss.on('connection', function connection(ws, req) {
-    ws.on('message', function incoming(point) {
-        const ip = req.connection.remoteAddress;
-        debug(`client[${ip}]: ${point}`);
+    const ip = req.connection.remoteAddress;
+    debug(`new client - ${ip}`);
 
-        try {
-            point = JSON.parse(point);
-        } catch (error) {
-            return;
-        }
+    ws.on('message', function incoming(point) {
+        point = parseNewPoint(point);
 
         // validate point
         if (!validateNewPoint(point)) {
-            debug('validation failed')
+            debug('error: validation failed')
             return;
         }
 
@@ -49,11 +45,23 @@ function send(ws, data) {
 }
 
 function error(error, ws) {
-    debug(error);
+    debug(`error: ${error}`);
 
     if (ws) {
         debug('ws terminate');
         ws.terminate();
+    }
+}
+
+function parseNewPoint(point) {
+    if (!point ||  typeof point !== 'string') {
+        return;
+    }
+
+    try {
+        return JSON.parse(point);
+    } catch (error) {
+        return;
     }
 }
 
