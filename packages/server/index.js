@@ -7,5 +7,3 @@ redis.startClient();
 
 server = createServer();
 server.listen(parameters.port, () => {debug(`Server listening in port ${parameters.port}`)});
-
-

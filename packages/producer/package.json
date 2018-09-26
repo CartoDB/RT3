@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/CartoDB/RT3#readme",
   "dependencies": {
+    "faker": "^4.1.0",
     "ws": "^6.0.0"
   }
 }

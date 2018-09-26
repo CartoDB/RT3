@@ -1,0 +1,16 @@
+{
+  "properties": {
+    "speed": {
+      "type": "number"
+    },
+    "vehicle": {
+      "type": "category"
+    },
+    "name": {
+      "type": "category"
+    },
+    "id": {
+      "type": "number"
+    }
+  }
+}
