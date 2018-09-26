@@ -6,6 +6,9 @@
     "vehicle": {
       "type": "category"
     },
+    "name": {
+      "type": "category"
+    },
     "id": {
       "type": "number"
     }
