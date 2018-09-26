@@ -4,7 +4,8 @@
   "description": "RT3 Reference implementation",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -21,5 +22,12 @@
   "bugs": {
     "url": "https://github.com/CartoDB/RT3/issues"
   },
-  "homepage": "https://github.com/CartoDB/RT3#readme"
+  "homepage": "https://github.com/CartoDB/RT3#readme",
+  "devDependencies": {
+    "nodemon": "^1.18.4"
+  },
+  "dependencies": {
+    "debug": "^4.0.1",
+    "ws": "^6.0.0"
+  }
 }
