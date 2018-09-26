@@ -6,7 +6,7 @@ if (!process.env.IP) {
   return process.exit(-1);
 }
 
-const rt3Producer = new RT3Producer(`ws://${process.env.ip}:3333`);
+const rt3Producer = new RT3Producer(`ws://${process.env.IP}:3333`);
 
 let i = 0;
 setInterval(() => {
