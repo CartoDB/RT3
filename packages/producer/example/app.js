@@ -7,7 +7,7 @@ document.querySelector('#js-send').addEventListener('click', () => {
   const point = {
     lat: parseFloat(document.getElementById('lat').value),
     lon: parseFloat(document.getElementById('lon').value),
-    id: parseFloat(document.getElementById('id').id),
+    id: parseFloat(document.getElementById('id').value),
     data: JSON.parse(document.getElementById('data').value),
   }
 
