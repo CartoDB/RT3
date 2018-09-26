@@ -1,11 +1,12 @@
 const http = require('http');
 const WebSocket = require('ws');
-const fixtures = require('./config/fixtures.json')
-const debug = require('debug')('app:index')
+const debug = require('debug')('app:index');
+
+const ACTION_SET = 'set';
+const ACTION_DELETE = 'delete';
 
 const server = new http.createServer();
 const wss = new WebSocket.Server({ server });
-
 
 wss.broadcast = function broadcast(data) {
     wss.clients.forEach(function each(client) {
@@ -33,8 +34,10 @@ wss.on('connection', function connection(ws, req) {
     });
 
     // send current state
-    sendFixtures(ws);
 });
+
+server.listen(3333);
+
 
 function send(ws, data) {
     if (ws.readyState === WebSocket.OPEN) {
@@ -66,33 +69,9 @@ function parseNewPoint(point) {
 }
 
 function validateNewPoint(event) {
-    return typeof event == 'object' && event.type && typeof event.type == 'string'
+    return  typeof event == 'object' &&
+            event.type &&
+            typeof event.type == 'string' &&
+            [ACTION_SET, ACTION_DELETE].includes(event.type)
 }
 
-function sendFixtures(ws) {
-    let point = fixtures[0];
-
-    let i = 0;
-    const interval = setInterval(function () {
-        point.lat = Math.random() * 180 - 90
-        point.lon = Math.random() * 360 - 180
-        point.data.foo = i++ % 3
-
-        if (ws.readyState === WebSocket.OPEN && i < 20) {
-            ws.send(JSON.stringify(prepareSet(point)));
-        } else {
-            clearInterval(interval)
-        }
-    }, 100);
-
-}
-
-function prepareSet(point) {
-    return Object.assign({ type: 'set' }, point);
-}
-
-function prepareDelete(point) {
-    return Object.assign({ type: 'delete' }, { id: point.id });
-}
-
-server.listen(3333);
