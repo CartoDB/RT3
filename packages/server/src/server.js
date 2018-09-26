@@ -2,6 +2,7 @@ const http = require('http');
 const WebSocket = require('ws');
 const redis = require('./services/redis');
 const debug = require('debug')('app:server');
+const metadata =  require('../config/metadata')
 
 const ACTION_SET = 'set';
 const ACTION_DELETE = 'delete';
@@ -13,7 +14,8 @@ module.exports = function() {
     const wss = new WebSocket.Server({ server });
 
     wss.broadcast = function broadcast(data) {
-        wss.clients.forEach(function each(client) {
+        wss.clients.forEach(async function each(client) {
+            await client._sendingCurrentStatePromise;
             if (client.readyState === WebSocket.OPEN) {
                 send(client, data);
             }
@@ -40,9 +42,15 @@ module.exports = function() {
             redis.savePoint(REDIS_CURRENT_KEY, point.id, point);
         });
 
-        // send current state
-        const currentState = await redis.getCurrentState(REDIS_CURRENT_KEY);
-        currentState.forEach(point => send(ws, JSON.parse(point)));
+        ws.send(generateMetadataMsg(metadata));
+
+        async function sendCurrentStatePromise(){
+            // send current state
+            const currentState = await redis.getCurrentState(REDIS_CURRENT_KEY);
+            return await Promise.all(currentState.map(point => send(ws, JSON.parse(point))));
+        }
+
+        ws._sendingCurrentStatePromise = sendCurrentStatePromise();
     });
 
     return server;
@@ -52,7 +60,9 @@ module.exports = function() {
 
 function send(ws, data) {
     if (ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify(data));
+        return new Promise(resolve=>{
+            ws.send(JSON.stringify(data), resolve);
+        });
     } else {
         error(new Error('WebSocket is not open'), ws);
     }
@@ -85,4 +95,12 @@ function validateNewPoint(point) {
             typeof point.type == 'string' &&
             [ACTION_SET, ACTION_DELETE].includes(point.type) &&
             point.id !== undefined && point.id !== null
+}
+
+
+function generateMetadataMsg(metadata){
+    return JSON.stringify({
+        type: 'meta',
+        data: metadata,
+    });
 }
