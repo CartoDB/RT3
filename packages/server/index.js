@@ -22,7 +22,7 @@ function prepareSet(point) {
 }
 
 function prepareDelete(point) {
-    return Object.assign({type: 'set'}, {id: point.id});
+    return Object.assign({type: 'delete'}, {id: point.id});
 }
 
 server.listen(3333);
