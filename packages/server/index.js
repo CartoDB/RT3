@@ -1,6 +1,7 @@
 const http = require('http');
 const WebSocket = require('ws');
 const fixtures = require('./config/fixtures.json')
+const debug = require('debug')('index')
 
 const server = new http.createServer();
 const wss = new WebSocket.Server({ server });
@@ -17,10 +18,17 @@ wss.broadcast = function broadcast(data) {
 wss.on('connection', function connection(ws, req) {
     ws.on('message', function incoming(point) {
         const ip = req.connection.remoteAddress;
-        console.log(`client[${ip}]: ${point}`);
+        debug(`client[${ip}]: ${point}`);
+
+        try {
+            point = JSON.parse(point);
+        } catch (error) {
+            return;
+        }
 
         // validate point
         if (!validateNewPoint(point)) {
+            debug('validation failed')
             return;
         }
 
@@ -34,16 +42,17 @@ wss.on('connection', function connection(ws, req) {
 
 function send(ws, data) {
     if (ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify(prepareSet(data)));
+        ws.send(JSON.stringify(data));
     } else {
         error(new Error('WebSocket is not open'), ws);
     }
 }
 
 function error(error, ws) {
-    console.error(error);
+    debug(error);
 
     if (ws) {
+        debug('ws terminate');
         ws.terminate();
     }
 }
@@ -59,15 +68,15 @@ function sendFixtures(ws) {
     const interval = setInterval(function () {
         point.lat = Math.random() * 180 - 90
         point.lon = Math.random() * 360 - 180
-        point.data.foo = i++ % 50
+        point.data.foo = i++ % 3
 
-        if (ws.readyState === WebSocket.OPEN || i < 100) {
-            send(ws, prepareSet(point));
+        if (ws.readyState === WebSocket.OPEN && i < 20) {
+            ws.send(JSON.stringify(prepareSet(point)));
         } else {
             clearInterval(interval)
-            ws.terminate();
         }
     }, 100);
+
 }
 
 function prepareSet(point) {
