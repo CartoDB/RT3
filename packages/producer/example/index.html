@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>RT3 Consumer</title>
+  <script type="module" src="../index.js"></script>
+  <script type="module" src="./app.js"></script>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      max-width: 500px;
+      margin:auto;
+    }
+    label, button {
+      margin-top: 16px;
+    }
+  </style>
+</head>
+
+<body>
+  <label for="lat">Latitud</label>
+  <input name="lat" type="text" placeholder="lat" value="-3.7038021">
+  <label for="lon">Longitud</label>
+  <input name="lon" type="text" placeholder="lon" value="40.4180832">
+  <label for="id">Id:</label>
+  <input name="id" type="text" placeholder="id">
+  <label for="Data">Data:</label>
+  <textarea name="data" id="" cols="30" rows="10">
+{
+  "foo" : 1
+}
+  </textarea>
+  <button>Send</button>
+
+
+</body>
+
+</html>
