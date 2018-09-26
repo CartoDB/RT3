@@ -6,17 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>RT3 Consumer</title>
-  <script src="../index.js"></script>
+  <script type="module" src="../index.js"></script>
+  <script type="module" src="./app.js"></script>
+
 </head>
 
 <body>
-  <script>
-    const callbacks = {
-      onSet: data => console.log('onSet:', data),
-      onDelete: data => console.log('onDelete', data)
-    };
-    const client = new RT3Consumer('ws://10.0.32.102:3333', callbacks);
-  </script>
 
 </body>
 

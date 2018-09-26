@@ -1,4 +1,4 @@
-class RT3Consumer {
+export default class RT3Consumer {
   constructor(url, {
     onSet,
     onDelete
@@ -8,9 +8,7 @@ class RT3Consumer {
 
     this._socket = new WebSocket(url);
 
-    this._socket.addEventListener('open', event => {
-      this._socket.send('Hello Server!');
-    });
+    this._socket.addEventListener('open', event => {});
     this._socket.addEventListener('message', event => {
       this.onEvent(event);
     });
