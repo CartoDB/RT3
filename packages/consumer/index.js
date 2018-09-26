@@ -1,4 +1,4 @@
-class RT3Consumer {
+export default class RT3Consumer {
   constructor(url, {
     onSet,
     onDelete
