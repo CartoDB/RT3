@@ -1,4 +1,4 @@
-import RT3Producer from '../index.js';
+import RT3Producer from '../index-browser.js';
 
 const rt3Producer = new RT3Producer('ws://10.0.32.102:3333');
 

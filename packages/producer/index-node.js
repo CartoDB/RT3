@@ -1,7 +1,7 @@
-export default class RT3Producer {
+const ws = require('ws');
+module.exports = class RT3Producer {
   constructor(url) {
-    this._socket = new WebSocket(url);
-
+    this._socket = new ws(url);
     this._socket.addEventListener('open', event => {});
     this._socket.addEventListener('message', event => {});
   }
