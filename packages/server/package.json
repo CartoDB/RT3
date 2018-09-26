@@ -1,0 +1,25 @@
+{
+  "name": "rt3-server",
+  "version": "0.0.0",
+  "description": "RT3 Reference implementation",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CartoDB/RT3.git"
+  },
+  "keywords": [
+    "RT3",
+    "Real",
+    "time",
+    "maps"
+  ],
+  "author": "CARTO Dev team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/CartoDB/RT3/issues"
+  },
+  "homepage": "https://github.com/CartoDB/RT3#readme"
+}
