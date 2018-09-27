@@ -11,7 +11,7 @@ const ACTION_DELETE = 'delete';
 
 module.exports = function () {
     const server = new http.createServer();
-    const wss = new WebSocket.Server({ server, verifyClient });
+    const wss = new WebSocket.Server({ server, verifyClient, perMessageDeflate:true });
 
     wss.broadcast = function broadcast(data) {
         wss.clients.forEach(async function each(client) {
