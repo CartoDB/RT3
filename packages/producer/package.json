@@ -2,7 +2,7 @@
   "name": "rt3-producer",
   "version": "0.0.0",
   "description": "RT3 point producer",
-  "main": "index.js",
+  "main": "index-node.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "node": "node example/example-node.js"
