@@ -41,13 +41,18 @@ module.exports = {
         })
     },
 
-    savePoint(key, id, point) {
-        this.client.hsetAsync(key, id, JSON.stringify(point))
-            .catch(err => debug(`error: ${result}`));
+    savePoint(map, id, point) {
+        // save current
+        const REDIS_CURRENT_KEY = `${map}:current`;
+        this.client.hsetAsync(REDIS_CURRENT_KEY, id, JSON.stringify(point))
+            .catch(err => debug(`error:current ${result}`));
+
+        // save log
     },
 
-    async getCurrentState(key) {
-        const currentState = await this.client.hgetallAsync(key);
+    async getCurrentState(map) {
+        const REDIS_CURRENT_KEY = `${map}:current`;
+        const currentState = await this.client.hgetallAsync(REDIS_CURRENT_KEY);
         if (currentState) {
             return Object.values(currentState)
         }

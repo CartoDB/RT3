@@ -30,8 +30,6 @@ module.exports = function () {
             return ws.terminate();
         }
 
-        const REDIS_CURRENT_KEY = `${map}:current`;
-
         ws.on('message', function incoming(point) {
             point = parseNewPoint(point);
 
@@ -45,7 +43,7 @@ module.exports = function () {
             wss.broadcast(point);
 
             // send to redis
-            redis.savePoint(REDIS_CURRENT_KEY, point.id, point);
+            redis.savePoint(map, point.id, point);
         });
 
         // send map metadata
@@ -53,7 +51,7 @@ module.exports = function () {
 
         // send current state
         async function sendCurrentStatePromise() {
-            const currentState = await redis.getCurrentState(REDIS_CURRENT_KEY);
+            const currentState = await redis.getCurrentState(map);
             if (currentState) {
                 return await Promise.all(currentState.map(point => send(ws, JSON.parse(point))));
             }
