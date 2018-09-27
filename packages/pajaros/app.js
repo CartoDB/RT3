@@ -53,7 +53,9 @@ responsiveContent.addEventListener('ready', () => {
   USERNAME = prompt('Como te llamas?', `pajaro-${makeid()}`);
 
   map.on('click', function (e) {
-    addBird(e.latlng);
+    for (let i = 0; i < 5; i++) {
+      setImmediate(addBird(e.latlng));
+    }
   });
 
 
