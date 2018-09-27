@@ -7,9 +7,11 @@ const parameters = require('../../config/parameters').test;
 const WebSocket = require('ws');
 const metadata = require('../../config/metadata');
 
+
 const debug = require('debug')('app:test:functional:index');
 
-const REDIS_CURRENT_KEY = 'mapTest:current';
+const MAP = 'test-map';
+const REDIS_CURRENT_KEY = `${MAP}:current`;
 let ws;
 
 describe('FUNCTIONAL API - INDEX', function () {
@@ -29,19 +31,19 @@ describe('FUNCTIONAL API - INDEX', function () {
     })
 
     it('should response meta', function (done) {
-        ws = new WebSocket(`ws://localhost:${parameters.port}`);
+        ws = new WebSocket(`ws://localhost:${parameters.port}/${MAP}`);
 
         ws.on('message', function incoming(data) {
             expect(JSON.parse(data)).to.deep.equal({
                 type: 'meta',
-                data: metadata
+                data: metadata[MAP]
             });
             done();
         });
     });
 
     it('should response meta and point', function (done) {
-        ws = new WebSocket(`ws://localhost:${parameters.port}`);
+        ws = new WebSocket(`ws://localhost:${parameters.port}/${MAP}`);
 
         const point = {
             type: 'set',
@@ -57,7 +59,7 @@ describe('FUNCTIONAL API - INDEX', function () {
         const expectedResult = [
             {
                 type: 'meta',
-                data: metadata
+                data: metadata[MAP]
             },
             point
         ];

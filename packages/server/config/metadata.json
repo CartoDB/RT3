@@ -1,16 +1,55 @@
 {
-  "properties": {
-    "speed": {
-      "type": "number"
-    },
-    "vehicle": {
-      "type": "category"
-    },
-    "name": {
-      "type": "category"
-    },
-    "id": {
-      "type": "number"
+  "test-map": {
+    "properties": {
+      "speed": {
+        "type": "number"
+      },
+      "vehicle": {
+        "type": "category"
+      },
+      "name": {
+        "type": "category"
+      },
+      "id": {
+        "type": "number"
+      }
+    }
+  },
+  "bicing": {
+    "properties": {
+      "id": {
+        "type": "number"
+      },
+      "type": {
+        "type": "category"
+      },
+      "latitude": {
+        "type": "number"
+      },
+      "longitude": {
+        "type": "number"
+      },
+      "streetName": {
+        "type": "category"
+      },
+      "streetNumber": {
+        "type": "number"
+      },
+      "altitude": {
+        "type": "number"
+      },
+      "slots": {
+        "type": "number"
+      },
+      "bikes": {
+        "type": "number"
+      },
+      "nearbyStations": {
+        "type": "category"
+      },
+      "status": {
+        "type": "category"
+      }
     }
   }
 }
