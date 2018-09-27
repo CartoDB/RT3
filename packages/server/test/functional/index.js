@@ -1,0 +1,78 @@
+'use strict'
+
+const expect = require('chai').expect;
+const createServer = require('../../src/server');
+const redis = require('../../src/services/redis');
+const parameters = require('../../config/parameters').test;
+const WebSocket = require('ws');
+const metadata = require('../../config/metadata');
+
+const debug = require('debug')('app:test:functional:index');
+
+const REDIS_CURRENT_KEY = 'mapTest:current';
+let ws;
+
+describe('FUNCTIONAL API - INDEX', function () {
+    before(function (done) {
+        redis.startClient();
+
+        const server = createServer();
+        server.listen(parameters.port, () => {
+            debug(`Server listening in port ${parameters.port}`);
+            done();
+        });
+    });
+
+    afterEach(async function () {
+        ws.terminate();
+        await redis.client.delAsync(REDIS_CURRENT_KEY);
+    })
+
+    it('should response meta', function (done) {
+        ws = new WebSocket(`ws://localhost:${parameters.port}`);
+
+        ws.on('message', function incoming(data) {
+            expect(JSON.parse(data)).to.deep.equal({
+                type: 'meta',
+                data: metadata
+            });
+            done();
+        });
+    });
+
+    it('should response meta and point', function (done) {
+        ws = new WebSocket(`ws://localhost:${parameters.port}`);
+
+        const point = {
+            type: 'set',
+            lat: -3.7038021,
+            lon: 40.4180832,
+            id: 1,
+            data: {
+                foo: 1
+            }
+        };
+
+        let messagesReceived = 0;
+        const expectedResult = [
+            {
+                type: 'meta',
+                data: metadata
+            },
+            point
+        ];
+
+        ws.on('message', function incoming(data) {
+            expect(JSON.parse(data)).to.deep.equal(expectedResult[messagesReceived++]);
+
+            if (messagesReceived >= expectedResult.length) {
+                done();
+            }
+        });
+
+        ws.on('open', function open() {
+            debug('open');
+            ws.send(JSON.stringify(point));
+        });
+    });
+});

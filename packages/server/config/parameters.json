@@ -4,5 +4,13 @@
         "host": "redis://localhost",
         "port": "6379",
         "db": 1
+    },
+    "test": {
+        "port": 3334,
+        "redis": {
+            "host": "redis://localhost",
+            "port": "6379",
+            "db": 2
+        }
     }
 }

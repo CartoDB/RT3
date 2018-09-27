@@ -47,7 +47,9 @@ module.exports = function () {
         // send current state
         async function sendCurrentStatePromise() {
             const currentState = await redis.getCurrentState(REDIS_CURRENT_KEY);
-            return await Promise.all(currentState.map(point => send(ws, JSON.parse(point))));
+            if (currentState) {
+                return await Promise.all(currentState.map(point => send(ws, JSON.parse(point))));
+            }
         }
 
         ws._sendingCurrentStatePromise = sendCurrentStatePromise();
@@ -107,6 +109,6 @@ function validateNewPoint(point) {
 function generateMetadataMsg(metadata) {
     return JSON.stringify({
         type: 'meta',
-        data: metadata,
+        data: metadata
     });
 }
