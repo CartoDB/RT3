@@ -24,6 +24,11 @@ class RT3Producer {
 let ID = 0;
 const birds = [];
 let USERNAME;
+let R = 0;
+let G = 0;
+let B = 0;
+let SIZE = 30;
+
 const responsiveContent = document.querySelector('as-responsive-content');
 const rt3Producer = new RT3Producer('ws://10.0.32.102:3333/birds?api_key=1234')
 
@@ -60,6 +65,16 @@ responsiveContent.addEventListener('ready', () => {
 
 });
 
+document.querySelectorAll('span[data-color]').forEach(element => {
+  element.addEventListener('click', e => {
+    [R, G, B] = e.target.getAttribute('data-color').split(' ');
+  })
+});
+
+document.querySelector('#js-size').addEventListener('change', e => {
+  SIZE = e.detail[0];
+})
+
 function moveBird(bird) {
   const n1 = noise.simplex3(bird.lat / 40, bird.lon / 40, Date.now());
   bird.data.dir += 0.1 * n1;
@@ -75,10 +90,10 @@ function addBird(latlng) {
     lon: latlng.lng,
     data: {
       username: USERNAME,
-      size: 30,
-      r: 255,
-      g: 0,
-      b: 0,
+      size: SIZE,
+      r: R,
+      g: G,
+      b: B,
       dir: Math.random() * 2 * Math.PI,
     }
   }

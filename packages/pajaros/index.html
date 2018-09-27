@@ -20,27 +20,50 @@
   <link href="https://carto.com/developers/carto-js/examples/maps/public/style.css" rel="stylesheet">
   <!-- / CARTO.js -->
   <script src="./noise.js"></script>
+  <style>
+    .color-container {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .color {
+      margin: 5px;
+      height: 50px;
+      flex: 1 1 100px;
+      display: inline-block;
+    }
+
+    .color-1 {
+      background: rgb(79, 178, 134);
+    }
+
+    .color-2 {
+      background: rgb(201, 66, 119);
+    }
+
+    .color-3 {
+      background: rgb(128, 35, 146);
+    }
+
+    .color-4 {
+      background: rgb(28, 31, 51);
+    }
+  </style>
 </head>
 
 <body class="as-app">
   <as-responsive-content>
     <aside class="as-sidebar as-sidebar--left as-p--16">
-      <div class="as-box">
+      <div class="as-container as-container--scrollable">
         <p class="as-title">Tamaño del páharo</p>
         <as-range-slider min-value="10" max-value="50" value="20" id="js-size"></as-range-slider>
-        <hr>
         <p class="as-title">Color del páharo</p>
-        <button class="as-btn as-btn--primary as-badge as-bg--success as-color---04">Success</button>
-        <button class="as-btn as-btn--primary as-badge as-bg--error as-color---04">Error</button>
-        <button class="as-btn as-btn--primary as-badge as-bg--primary as-color---04">Primary</button>
-        <button class="as-btn as-btn--primary as-badge as-bg--secondary as-color---04">Secondary</button>
-        <button class="as-btn as-btn--primary as-badge as-bg--badge-gray"> Gray</button>
-        <button class="as-btn as-btn--primary as-badge as-bg--badge-blue"> Blue</button>
-        <button class="as-btn as-btn--primary as-badge as-bg--badge-pink"> Pink</button>
-        <button class="as-btn as-btn--primary as-badge as-bg--badge-green"> Green</button>
-        <button class="as-btn as-btn--primary as-badge as-bg--badge-yellow"> Yellow</button>
-        <button class="as-btn as-btn--primary as-badge as-bg--warning">Warning</button>
-        <button class="as-btn as-btn--primary as-badge as-bg--complementary">Complementary</button>
+        <div class="color-container">
+          <span data-color="79 178 134" class="color color-1"></span>
+          <span data-color="201 66 119" class="color color-2"></span>
+          <span data-color="128 35 146" class="color  color-3"></span>
+          <span data-color="28 31 51" class="color  color-4"></span>
+        </div>
       </div>
     </aside>
     <main class="as-main">
