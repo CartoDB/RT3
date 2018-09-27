@@ -58,4 +58,5 @@ module.exports = {
             return Object.values(currentState)
         }
     }
+
 }

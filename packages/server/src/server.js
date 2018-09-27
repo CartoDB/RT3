@@ -4,13 +4,14 @@ const url = require('url');
 const redis = require('./services/redis');
 const debug = require('debug')('app:server');
 const metadata = require('../config/metadata');
+const verifyClient = require('./services/verifyClient');
 
 const ACTION_SET = 'set';
 const ACTION_DELETE = 'delete';
 
 module.exports = function () {
     const server = new http.createServer();
-    const wss = new WebSocket.Server({ server });
+    const wss = new WebSocket.Server({ server, verifyClient });
 
     wss.broadcast = function broadcast(data) {
         wss.clients.forEach(async function each(client) {

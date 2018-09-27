@@ -31,7 +31,7 @@ describe('FUNCTIONAL API - INDEX', function () {
     })
 
     it('should response meta', function (done) {
-        ws = new WebSocket(`ws://localhost:${parameters.port}/${MAP}`);
+        ws = new WebSocket(`ws://localhost:${parameters.port}/${MAP}?api_key=1234`);
 
         ws.on('message', function incoming(data) {
             expect(JSON.parse(data)).to.deep.equal({
@@ -43,7 +43,7 @@ describe('FUNCTIONAL API - INDEX', function () {
     });
 
     it('should response meta and point', function (done) {
-        ws = new WebSocket(`ws://localhost:${parameters.port}/${MAP}`);
+        ws = new WebSocket(`ws://localhost:${parameters.port}/${MAP}?api_key=1234`);
 
         const point = {
             type: 'set',
@@ -75,6 +75,28 @@ describe('FUNCTIONAL API - INDEX', function () {
         ws.on('open', function open() {
             debug('open');
             ws.send(JSON.stringify(point));
+        });
+    });
+
+    it('should be auth', function (done) {
+        ws = new WebSocket(`ws://localhost:${parameters.port}/${MAP}?api_key=1234`);
+
+        ws.on('message', function incoming(data) {
+            expect(JSON.parse(data)).to.deep.equal({
+                type: 'meta',
+                data: metadata[MAP]
+            });
+            done();
+        });
+    });
+
+    it('should be unauthorized', function (done) {
+        ws = new WebSocket(`ws://localhost:${parameters.port}/${MAP}`);
+
+        ws.on('error', function (err) {
+            expect(err).not.to.be.null;
+            expect(err.message).to.be.equals('Unexpected server response: 401');
+            done();
         });
     });
 });
