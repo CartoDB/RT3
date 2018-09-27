@@ -11,7 +11,7 @@ const ACTION_DELETE = 'delete';
 
 module.exports = function () {
     const server = new http.createServer();
-    const wss = new WebSocket.Server({ server, verifyClient });
+    const wss = new WebSocket.Server({ server, verifyClient, perMessageDeflate:true });
 
     wss.broadcast = function broadcast(data) {
         wss.clients.forEach(async function each(client) {
@@ -39,8 +39,6 @@ module.exports = function () {
                 debug('error: validation failed', point)
                 return;
             }
-
-            debug(`client::${ip}::${map}::${JSON.stringify(point)}`);
 
             // Broadcast to everyone else
             wss.broadcast(point);
@@ -115,10 +113,8 @@ function validateNewPoint(point) {
 
 function getMap(reqUrl) {
     const pathname = url.parse(reqUrl).pathname.substring(1).split('/');
-    if (metadata[pathname]) {
-        return {
-            map: pathname,
-            mapMetatada: metadata[pathname]
-        }
+    return {
+        map: pathname,
+        mapMetatada: metadata[pathname]
     }
 }

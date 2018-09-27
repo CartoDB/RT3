@@ -26,7 +26,9 @@ describe('FUNCTIONAL API - INDEX', function () {
     });
 
     afterEach(async function () {
-        ws.terminate();
+        if (ws) {
+            ws.terminate();
+        }
         await redis.client.delAsync(REDIS_CURRENT_KEY);
     })
 
@@ -73,7 +75,6 @@ describe('FUNCTIONAL API - INDEX', function () {
         });
 
         ws.on('open', function open() {
-            debug('open');
             ws.send(JSON.stringify(point));
         });
     });
@@ -97,6 +98,50 @@ describe('FUNCTIONAL API - INDEX', function () {
             expect(err).not.to.be.null;
             expect(err.message).to.be.equals('Unexpected server response: 401');
             done();
+        });
+    });
+
+    it('should receive initial state', function (done) {
+        const ws1 = new WebSocket(`ws://localhost:${parameters.port}/${MAP}?api_key=1234`);
+
+        const point = {
+            type: 'set',
+            lat: -3.7038021,
+            lon: 40.4180832,
+            id: 1,
+            data: {
+                foo: 1
+            }
+        };
+
+        let messagesReceived = 0;
+        const expectedResult = [
+            {
+                type: 'meta',
+                data: metadata[MAP]
+            },
+            point
+        ];
+
+        ws1.on('open', function open() {
+            ws1.send(JSON.stringify(point));
+
+            const ws3 = new WebSocket(`ws://localhost:${parameters.port}?api_key=1234`);
+            ws3.on('message', function open(data) {
+                done(new Error('It should not receive anything'));
+            });
+
+            const ws2 = new WebSocket(`ws://localhost:${parameters.port}/${MAP}?api_key=1234`);
+            ws2.on('message', function open(data) {
+                expect(JSON.parse(data)).to.deep.equal(expectedResult[messagesReceived++]);
+
+                if (messagesReceived >= expectedResult.length) {
+                    ws1.terminate();
+                    ws2.terminate();
+                    ws3.terminate();
+                    done();
+                }
+            });
         });
     });
 });

@@ -74,6 +74,9 @@
       },
       "size": {
         "type": "number"
+      },
+      "ttl": {
+        "type": "number"
       }
     }
   }
