@@ -56,7 +56,7 @@ responsiveContent.addEventListener('ready', () => {
       bird = moveBird(bird);
       rt3Producer.set(bird);
     })
-  }, 60);
+  }, 80);
 
 });
 
