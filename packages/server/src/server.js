@@ -48,15 +48,15 @@ module.exports = function () {
 
             // validate point
             if (!validateNewPoint(message)) {
-                debug('error: validation failed', point)
+                debug('error::validation', message)
                 return;
             }
 
             // Broadcast to everyone else
-            wss.broadcast(point);
+            wss.broadcast(message);
 
             // send to redis
-            redis.savePoint(map, point.id, point);
+            redis.savePoint(map, message.id, message);
         });
 
         // send map metadata
@@ -106,9 +106,9 @@ function parseNewMessage(point) {
 }
 
 function isAReadyMessage(message) {
-    return typeof point == 'object' &&
-        point.type &&
-        point.type == 'ready'
+    return typeof message == 'object' &&
+        message.type &&
+        message.type == 'ready'
 }
 
 function validateNewPoint(point) {
