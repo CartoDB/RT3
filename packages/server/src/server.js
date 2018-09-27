@@ -42,7 +42,8 @@ module.exports = function () {
             redis.savePoint(REDIS_CURRENT_KEY, point.id, point);
         });
 
-        ws.send(generateMetadataMsg(metadata));
+        // send map metadata
+        send(ws, { type: 'meta', data: metadata });
 
         // send current state
         async function sendCurrentStatePromise() {
@@ -79,7 +80,7 @@ function send(ws, data) {
 function error(error, ws) {
     debug(`error: ${error}`);
 
-    if (ws) {
+    if (ws && [WebSocket.OPEN, WebSocket.CONNECTING].includes(ws.readyState)) {
         debug('ws terminate');
         ws.terminate();
     }
@@ -103,12 +104,4 @@ function validateNewPoint(point) {
         typeof point.type == 'string' &&
         [ACTION_SET, ACTION_DELETE].includes(point.type) &&
         point.id !== undefined && point.id !== null
-}
-
-
-function generateMetadataMsg(metadata) {
-    return JSON.stringify({
-        type: 'meta',
-        data: metadata
-    });
 }
