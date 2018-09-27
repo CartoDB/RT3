@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- Include CSS elements -->
+    <link rel="stylesheet" href="https://libs.cartocdn.com/airship-style/v1.0.0-alpha.44/airship.css">
+    <!-- Include icons -->
+    <link rel="stylesheet" href="https://libs.cartocdn.com/airship-icons/v1.0.0-alpha.44/icons.css">
+    <!-- Include airship components -->
+    <script src="https://libs.cartocdn.com/airship-components/v1.0.0-alpha.44/airship.js"></script>
+    <!-- Include CARTO VL JS -->
+    <script src="https://libs.cartocdn.com/carto-vl/v0.8.0/carto-vl.js"></script>
+    <!-- Include Mapbox GL JS -->
+    <script src="https://libs.cartocdn.com/mapbox-gl/v0.48.0-carto1/mapbox-gl.js"></script>
+    <!-- Include Mapbox GL CSS -->
+    <link href="https://libs.cartocdn.com/mapbox-gl/v0.48.0-carto1/mapbox-gl.css">
+</head>
+
+<body class="as-app">
+
+    <header class="as-toolbar">
+        <div class="as-toolbar__item">
+            <img src="https://carto.com/developers/img/logo-developer-center.08ee0c4a.svg" alt="Logo" />
+        </div>
+        <i class="as-toolbar__item as-icon-points"></i>
+    </header>
+    <nav class="as-tabs"></nav>
+    <as-responsive-content>
+        <aside class="as-sidebar as-sidebar--xl as-sidebar--left">
+            <as-category-widget class="as-p--16" heading="Business Volume" description="Description" default-bar-color="#47DB99">
+            </as-category-widget>
+        </aside>
+
+        <main class="as-main">
+            <div class="as-map-area">
+                <div id="map"></div>
+
+                <div class="as-map-panels">
+                    <div class="as-panel as-panel--bottom as-panel--left">
+                        <div class="as-panel__element">
+                            <section class="as-box">
+                                <h1 class="as-title">Filters</h1>
+                                <p class="as-body">
+                                    View closed stops
+                                </p>
+                                <as-switch name="toggle-layer"></as-switch>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+    </as-responsive-content>
+
+    <!-- Basic CARTO-VL MAP -->
+    <script>
+        const responsiveContent = document.querySelector('as-responsive-content');
+        responsiveContent.addEventListener('ready', () => {
+            const map = new mapboxgl.Map({
+                container: 'map',
+                style: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
+                center: [0, 30],
+                zoom: 2,
+                scrollZoom: false,
+                dragRotate: false,
+                touchZoomRotate: false
+            });
+
+            const categoryWidget = document.querySelector('as-category-widget');
+            categoryWidget.showHeader = true;
+            categoryWidget.showClearButton = true;
+            categoryWidget.useTotalPercentage = false;
+            categoryWidget.visibleCategories = Infinity;
+            categoryWidget.categories = [
+                { name: 'Bars & Restaurants', value: 1000, color: '#FABADA' },
+                { name: 'Fashion', value: 900 },
+                { name: 'Grocery', value: 800 },
+                { name: 'Health', value: 400 },
+                { name: 'Shopping mall', value: 250 },
+                { name: 'Transportation', value: 1000 },
+                { name: 'Leisure', value: 760 }
+            ];
+        });
+    </script>
+</body>
+
+</html>
