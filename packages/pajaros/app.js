@@ -28,6 +28,7 @@ let R = 0;
 let G = 0;
 let B = 0;
 let SIZE = 30;
+let TTL = 50;
 
 const responsiveContent = document.querySelector('as-responsive-content');
 const rt3Producer = new RT3Producer('ws://10.0.32.102:3333/birds?api_key=1234')
@@ -58,8 +59,13 @@ responsiveContent.addEventListener('ready', () => {
 
   setInterval(() => {
     birds.forEach(bird => {
-      bird = moveBird(bird);
-      rt3Producer.set(bird);
+      if (bird.data.ttl <= 0) {
+        rt3Producer.delete(bird.id);
+        birds.splice(birds.indexOf(bird), 1);
+      } else {
+        bird = moveBird(bird);
+        rt3Producer.set(bird);
+      }
     })
   }, 80);
 
@@ -75,15 +81,21 @@ document.querySelector('#js-size').addEventListener('change', e => {
   SIZE = e.detail[0];
 })
 
+document.querySelector('#js-ttl').addEventListener('change', e => {
+  TTL = e.detail[0];
+})
+
 function moveBird(bird) {
   const n1 = noise.simplex3(bird.lat / 40, bird.lon / 40, Date.now());
   bird.data.dir += 0.1 * n1;
   bird.lat += Math.sin(bird.data.dir);
   bird.lon += Math.cos(bird.data.dir);
+  bird.data.ttl = (bird.data.ttl < 1) ? 0 : bird.data.ttl - 1;
   return bird;
 }
 
 function addBird(latlng) {
+  console.log(TTL);
   const bird = {
     id: `${USERNAME}-${ID++}`.hashCode(),
     lat: latlng.lat,
@@ -95,6 +107,7 @@ function addBird(latlng) {
       g: G,
       b: B,
       dir: Math.random() * 2 * Math.PI,
+      ttl: TTL,
     }
   }
   birds.push(bird);
