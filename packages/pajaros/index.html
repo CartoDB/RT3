@@ -19,10 +19,15 @@
   <script src="https://libs.cartocdn.com/carto.js/v4.1.2/carto.min.js"></script>
   <link href="https://carto.com/developers/carto-js/examples/maps/public/style.css" rel="stylesheet">
   <!-- / CARTO.js -->
+  <script src="./noise.js"></script>
 </head>
 
 <body class="as-app">
   <as-responsive-content>
+    <aside class="as-sidebar as-sidebar--left as-p--16">
+      <p class="as-body">Tamaño del páharo</p>
+      <as-range-slider min-value="10" max-value="50" value="20" id="js-size"></as-range-slider>
+    </aside>
     <main class="as-main">
       <div class="as-map-area">
         <div id="map"></div>

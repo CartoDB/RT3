@@ -25,7 +25,7 @@ let ID = 0;
 const birds = [];
 let USERNAME;
 const responsiveContent = document.querySelector('as-responsive-content');
-const rt3Producer = new RT3Producer('ws://10.0.32.102:3333/birds')
+const rt3Producer = new RT3Producer('ws://10.0.32.102:3333/birds?api_key=1234')
 
 responsiveContent.addEventListener('ready', () => {
   const map = L.map('map', {
@@ -56,23 +56,30 @@ responsiveContent.addEventListener('ready', () => {
       bird = moveBird(bird);
       rt3Producer.set(bird);
     })
-  }, 1000);
+  }, 60);
 
 });
 
 function moveBird(bird) {
-  bird.lat = bird.lat += 0.001;
-  bird.lon = bird.lon += 0.001;
+  const n1 = noise.simplex3(bird.lat / 40, bird.lon / 40, Date.now());
+  bird.data.dir += 0.1 * n1;
+  bird.lat += Math.sin(bird.data.dir);
+  bird.lon += Math.cos(bird.data.dir);
   return bird;
 }
 
 function addBird(latlng) {
   const bird = {
-    id: `${USERNAME}-${ID++}`,
+    id: `${USERNAME}-${ID++}`.hashCode(),
     lat: latlng.lat,
     lon: latlng.lng,
     data: {
-      username: USERNAME
+      username: USERNAME,
+      size: 30,
+      r: 255,
+      g: 0,
+      b: 0,
+      dir: Math.random() * 2 * Math.PI,
     }
   }
   birds.push(bird);
@@ -87,3 +94,15 @@ function makeid() {
 
   return text;
 }
+
+String.prototype.hashCode = function () {
+  var hash = 0,
+    i, chr;
+  if (this.length === 0) return hash;
+  for (i = 0; i < this.length; i++) {
+    chr = this.charCodeAt(i);
+    hash = ((hash << 5) - hash) + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return hash;
+};
