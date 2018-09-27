@@ -59,6 +59,21 @@
       },
       "username": {
         "type": "category"
+      },
+      "r": {
+        "type": "number"
+      },
+      "g": {
+        "type": "number"
+      },
+      "b": {
+        "type": "number"
+      },
+      "dir": {
+        "type": "number"
+      },
+      "size": {
+        "type": "number"
       }
     }
   }
