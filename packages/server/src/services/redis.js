@@ -45,6 +45,7 @@ module.exports = {
         // save current
         const REDIS_CURRENT_KEY = `${map}:current`;
         this.client.hsetAsync(REDIS_CURRENT_KEY, id, JSON.stringify(point))
+            .then(debug(`saved::${map}::${id}}`))
             .catch(err => debug(`error:current ${result}`));
 
         // save log

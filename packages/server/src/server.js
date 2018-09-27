@@ -39,6 +39,8 @@ module.exports = function () {
                 return;
             }
 
+            debug(`client::${ip}::${map}::${JSON.stringify(point)}`);
+
             // Broadcast to everyone else
             wss.broadcast(point);
 
