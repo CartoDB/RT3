@@ -1,7 +1,7 @@
 export default class RT3Consumer {
-  constructor(url, { onSet = noOp, onDelete = noOp}) {
-    this.onSet = onSet;
-    this.onDelete = onDelete;
+  constructor(url) {
+    this.onSet = noOp;
+    this.onDelete = noOp;
     this._socket = new WebSocket(url);
     this._socket.addEventListener('message', this.onEvent.bind(this));
     this._metadataPromise = new Promise((resolve, reject) => {
@@ -19,6 +19,7 @@ export default class RT3Consumer {
   setCallbacks({onSet, onDelete}){
     this.onSet = onSet;
     this.onDelete =  onDelete;
+    this._socket.send(JSON.stringify({type: 'ready' }));
   }
 
   onEvent(event) {
@@ -49,6 +50,4 @@ export default class RT3Consumer {
   }
 }
 
-function noOp() {
-
-}
+function noOp() {}
