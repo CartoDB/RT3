@@ -1,17 +1,17 @@
 const http = require('http');
 const WebSocket = require('ws');
+const url = require('url');
 const redis = require('./services/redis');
 const debug = require('debug')('app:server');
-const metadata =  require('../config/metadata')
+const metadata = require('../config/metadata');
+const verifyClient = require('./services/verifyClient');
 
 const ACTION_SET = 'set';
 const ACTION_DELETE = 'delete';
 
-const REDIS_CURRENT_KEY = 'mapTest:current';
-
-module.exports = function() {
+module.exports = function () {
     const server = new http.createServer();
-    const wss = new WebSocket.Server({ server });
+    const wss = new WebSocket.Server({ server, verifyClient });
 
     wss.broadcast = function broadcast(data) {
         wss.clients.forEach(async function each(client) {
@@ -26,28 +26,38 @@ module.exports = function() {
         const ip = req.connection.remoteAddress;
         debug(`new client - ${ip}`);
 
+        const {map, mapMetatada} = getMap(req.url);
+        if(!map || !mapMetatada) {
+            return ws.terminate();
+        }
+
         ws.on('message', function incoming(point) {
             point = parseNewPoint(point);
 
             // validate point
             if (!validateNewPoint(point)) {
-                debug('error: validation failed')
+                debug('error: validation failed', point)
                 return;
             }
+
+            debug(`client::${ip}::${map}::${JSON.stringify(point)}`);
 
             // Broadcast to everyone else
             wss.broadcast(point);
 
             // send to redis
-            redis.savePoint(REDIS_CURRENT_KEY, point.id, point);
+            redis.savePoint(map, point.id, point);
         });
 
-        ws.send(generateMetadataMsg(metadata));
+        // send map metadata
+        send(ws, { type: 'meta', data: mapMetatada });
 
-        async function sendCurrentStatePromise(){
-            // send current state
-            const currentState = await redis.getCurrentState(REDIS_CURRENT_KEY);
-            return await Promise.all(currentState.map(point => send(ws, JSON.parse(point))));
+        // send current state
+        async function sendCurrentStatePromise() {
+            const currentState = await redis.getCurrentState(map);
+            if (currentState) {
+                return await Promise.all(currentState.map(point => send(ws, JSON.parse(point))));
+            }
         }
 
         ws._sendingCurrentStatePromise = sendCurrentStatePromise();
@@ -59,26 +69,32 @@ module.exports = function() {
 
 
 function send(ws, data) {
-    if (ws.readyState === WebSocket.OPEN) {
-        return new Promise(resolve=>{
-            ws.send(JSON.stringify(data), resolve);
-        });
-    } else {
-        error(new Error('WebSocket is not open'), ws);
+    if (ws.readyState !== WebSocket.OPEN) {
+        return error(new Error('WebSocket is not open'), ws);
     }
+
+    return new Promise(resolve => {
+        ws.send(JSON.stringify(data), err => {
+            if (err) {
+                return error(err, ws);
+            }
+
+            return resolve();
+        });
+    });
 }
 
 function error(error, ws) {
     debug(`error: ${error}`);
 
-    if (ws) {
+    if (ws && [WebSocket.OPEN, WebSocket.CONNECTING].includes(ws.readyState)) {
         debug('ws terminate');
         ws.terminate();
     }
 }
 
 function parseNewPoint(point) {
-    if (!point ||  typeof point !== 'string') {
+    if (!point || typeof point !== 'string') {
         return;
     }
 
@@ -90,17 +106,19 @@ function parseNewPoint(point) {
 }
 
 function validateNewPoint(point) {
-    return  typeof point == 'object' &&
-            point.type &&
-            typeof point.type == 'string' &&
-            [ACTION_SET, ACTION_DELETE].includes(point.type) &&
-            point.id !== undefined && point.id !== null
+    return typeof point == 'object' &&
+        point.type &&
+        typeof point.type == 'string' &&
+        [ACTION_SET, ACTION_DELETE].includes(point.type) &&
+        point.id !== undefined && point.id !== null
 }
 
-
-function generateMetadataMsg(metadata){
-    return JSON.stringify({
-        type: 'meta',
-        data: metadata,
-    });
+function getMap(reqUrl) {
+    const pathname = url.parse(reqUrl).pathname.substring(1).split('/');
+    if (metadata[pathname]) {
+        return {
+            map: pathname,
+            mapMetatada: metadata[pathname]
+        }
+    }
 }

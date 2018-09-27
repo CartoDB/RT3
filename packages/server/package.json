@@ -4,7 +4,8 @@
   "description": "RT3 Reference implementation",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "TEST_MODE=1 DEBUG=app* node test/index.js",
+    "dev-test": "TEST_MODE=1 DEBUG=app* nodemon test/index.js",
     "dev": "DEBUG=app* nodemon index.js"
   },
   "repository": {
@@ -24,6 +25,8 @@
   },
   "homepage": "https://github.com/CartoDB/RT3#readme",
   "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0",
     "nodemon": "^1.18.4"
   },
   "dependencies": {

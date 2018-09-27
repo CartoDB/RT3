@@ -1,7 +1,7 @@
 'use strict'
 
 const redis = require('redis');
-const parameters = require('../../config/parameters');
+let parameters = require('../../config/parameters');
 const debug = require('debug')('app:redis');
 const Promise = require('bluebird');
 
@@ -12,7 +12,11 @@ Promise.promisifyAll(redis.Multi.prototype);
 module.exports = {
     client: null,
 
-    startClient () {
+    startClient() {
+        if (process.env.TEST_MODE) {
+            parameters = parameters.test;
+        }
+
         const redisUrl = `${parameters.redis.host}:${parameters.redis.port}/${parameters.redis.db}`;
 
         // Client initialization
@@ -37,13 +41,22 @@ module.exports = {
         })
     },
 
-    savePoint(key, id, point) {
-        this.client.hsetAsync(key, id, JSON.stringify(point))
-            .catch(err => debug(`error: ${result}`));
+    savePoint(map, id, point) {
+        // save current
+        const REDIS_CURRENT_KEY = `${map}:current`;
+        this.client.hsetAsync(REDIS_CURRENT_KEY, id, JSON.stringify(point))
+            .then(debug(`saved::${map}::${id}}`))
+            .catch(err => debug(`error:current ${result}`));
+
+        // save log
     },
 
-    async getCurrentState(key) {
-        const currentState = await this.client.hgetallAsync(key);
-        return Object.values(currentState)
+    async getCurrentState(map) {
+        const REDIS_CURRENT_KEY = `${map}:current`;
+        const currentState = await this.client.hgetallAsync(REDIS_CURRENT_KEY);
+        if (currentState) {
+            return Object.values(currentState)
+        }
     }
+
 }
