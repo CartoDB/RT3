@@ -38,6 +38,7 @@ responsiveContent.addEventListener('ready', () => {
     zoomControl: false
   }).setView([30, 0], 3);
   map.scrollWheelZoom.disable();
+  map.doubleClickZoom.disable();
 
   L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}.png', {
     maxZoom: 18
