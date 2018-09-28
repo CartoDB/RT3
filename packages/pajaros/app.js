@@ -24,9 +24,9 @@ class RT3Producer {
 let ID = 0;
 const birds = [];
 let USERNAME;
-let R = 0;
-let G = 0;
-let B = 0;
+let R = 1;
+let G = 1;
+let B = 1;
 let SIZE = 30;
 let TTL = 50;
 
