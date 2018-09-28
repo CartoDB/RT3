@@ -99,7 +99,7 @@ function moveBird(bird) {
 
 function addBird(latlng) {
   const bird = {
-    id: `${USERNAME}-${ID++}`.hashCode(),
+    id: parseInt(Math.random() * 10000),
     lat: latlng.lat,
     lon: latlng.lng,
     data: {
