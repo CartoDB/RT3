@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>RT3 Demo | CARTO</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+
+  <!-- Include CSS elements -->
+  <link rel="stylesheet" href="https://libs.cartocdn.com/airship-style/v1.0.0-alpha.44/airship.css">
+  <!-- Include icons -->
+  <link rel="stylesheet" href="https://libs.cartocdn.com/airship-icons/v1.0.0-alpha.44/icons.css">
+  <!-- Include airship components -->
+  <script src="https://libs.cartocdn.com/airship-components/v1.0.0-alpha.44/airship.js"></script>
+
+  <!-- Include CARTO VL JS -->
+  <script src="./carto-vl.js"></script>
+  <!-- Include Mapbox GL JS -->
+  <script src="https://libs.cartocdn.com/mapbox-gl/v0.48.0-carto1/mapbox-gl.js"></script>
+  <!-- Include Mapbox GL CSS -->
+  <link href="https://libs.cartocdn.com/mapbox-gl/v0.48.0-carto1/mapbox-gl.css" rel="stylesheet" />
+  <style>
+  as-category-widget .as-category-widget__heading {
+    font-size: 2em;
+  }
+  .as-category-widget__count.as-body {
+    font-size: 1em;
+  }
+  .as-category-widget__title {
+    font-size: 1em !important;
+  }
+  p.as-category-widget__info.as-body{
+    font-size: 1.5em;
+  }
+  </style>
+</head>
+
+<body class="as-app">
+  <header class="as-toolbar"></header>
+  <div class="as-content">
+    <main class="as-main">
+      <div class="as-map-area">
+        <div id="map"></div>
+      </div>
+    </main>
+    <aside class="as-sidebar as-sidebar--right as-sidebar--xl">
+      <as-category-widget class="as-p--16" heading="Usernames" description="Bird owners" default-bar-color="#47DB99"></as-category-widget>
+    </aside>
+  </div>
+  <script>
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: carto.basemaps.darkmatter,
+      center: [0, 0],
+      zoom: 0,
+      dragRotate: false,
+      touchZoomRotate: false,
+    });
+
+    const nav = new mapboxgl.NavigationControl({
+      showCompass: false
+    });
+    map.addControl(nav, 'top-left');
+
+    // Define user
+    carto.setDefaultAuth({
+      user: 'cartovl',
+      apiKey: 'default_public'
+    });
+
+    // Define layer and variables for interactivity
+    const source = new carto.source.RT3('ws://10.0.32.102:3333/birds?api_key=1234');
+    // const source = new carto.source.Dataset
+    const viz = new carto.Viz(`
+      width: $size
+      strokeWidth: 1
+      color: rgba($r, $g, $b, ($ttl)/20*@filter)
+      symbol: image('./bird.png')
+      transform: rotate(-$dir*360/2/3.14)
+      @username: $username
+      @histogram: viewportHistogram($username)
+      @filter: true
+    `);
+    const layer = new carto.Layer('layer', source, viz);
+
+
+   const popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+    });
+
+    const interactivity = new carto.Interactivity(layer);
+    function setPopupsHover() {
+      interactivity.off('featureClick', updatePopup);
+      interactivity.on('featureHover', updatePopup);
+    }
+    function updatePopup(event) {
+      console.log(event);
+      if (event.features.length > 0) {
+        const vars = event.features[0].variables;
+        popup.setHTML(`
+        <div>
+          <h3 class ="h3">${vars.username.value}</h3>
+        </div>
+        `);
+        popup.setLngLat([event.coordinates.lng, event.coordinates.lat]);
+        if (!popup.isOpen()) {
+          popup.addTo(map);
+        }
+      } else {
+        popup.remove();
+      }
+    }
+    setPopupsHover();
+
+    layer.addTo(map, 'watername_ocean');
+
+    const categoryWidget = document.querySelector('as-category-widget');
+    categoryWidget.addEventListener('categoriesSelected', event => {
+      console.log('Categories Selected', event.detail)
+      if (event.detail.length == 0) {
+        viz.variables.filter.blendTo(`true`);
+      } else {
+        const names = event.detail.map(name => `'${name}'`);
+        viz.variables.filter.blendTo(`in($username, [${names.join()}])`);
+        console.log(`in($username, [${names.join()}])`);
+      }
+    });
+
+    layer.on('updated', () => {
+      const categoryWidget = document.querySelector('as-category-widget');
+      categoryWidget.showHeader = true;
+      categoryWidget.showClearButton = true;
+      categoryWidget.useTotalPercentage = false;
+      categoryWidget.visibleCategories = Infinity;
+      const h = viz.variables.histogram.value;
+      categoryWidget.categories = h.map(pair => {
+        return { name: pair.x, value: pair.y };
+      });
+    });
+  </script>
+</body>
+
+</html>
