@@ -74,6 +74,127 @@
       text-align: center;
     }
   </style>
+  <style>
+    input[type=range] {
+  /*removes default webkit styles*/
+  -webkit-appearance: none;
+
+  /*fix for FF unable to apply focus style bug */
+  border: 1px solid white;
+
+  /*required for proper track sizing in FF*/
+  background: transparent;
+  border: none;
+
+  cursor: pointer;
+  flex: 1;
+  padding: auto 10px;
+
+  margin: auto 5px;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+  height: 3px;
+  background: #1785FB;
+  border: none;
+  border-radius: 3px;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  border: none;
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  background: #1785FB;
+  margin-top: -4px;
+}
+
+input[type=range]:focus {
+  outline: none;
+}
+
+input[type=range]::-moz-range-track {
+  height: 3px;
+  background: #1785FB;
+  border: none;
+  border-radius: 3px;
+}
+
+input[type=range]::-moz-range-thumb {
+  border: none;
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  background: #1785FB;
+}
+
+input[type=range].white-thumb::-moz-range-thumb {
+  border-radius: 50%;
+  border: 2px solid #1785FB;
+  background: white;
+  height: 12px;
+  width: 12px;
+}
+
+input[type=range].white-thumb::-webkit-slider-thumb {
+  border-radius: 50%;
+  border: 3px solid #1785FB;
+  background: white;
+  height: 15px;
+  width: 15px;
+  margin-top: -6px;
+}
+
+input[type=range].white-thumb::-ms-thumb {
+  border-radius: 50%;
+  border: 2px solid #1785FB;
+  background: white;
+  height: 12px;
+  width: 12px;
+}
+
+input[type=range]:-moz-focusring {
+  outline: 1px solid white;
+  outline-offset: -1px;
+}
+
+input[type=range]::-ms-track {
+  height: 3px;
+  /*remove bg colour from the track, we'll use ms-fill-lower and ms-fill-upper instead */
+  background: transparent;
+  /*leave room for the larger thumb to overflow with a transparent border */
+  border-color: transparent;
+  border-width: 6px 0;
+  /*remove default tick marks*/
+  color: transparent;
+}
+
+input[type=range]::-ms-fill-lower {
+  background: #1785FB;
+}
+
+input[type="range"]::-moz-range-progress {
+  background: #1785FB;
+}
+
+input[type=range]::-ms-fill-upper {
+  background: #ccc;
+}
+
+input[type="range"]::-moz-range-track {
+  background: #ccc;
+}
+
+input[type=range]::-ms-thumb {
+  border: none;
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  background: #1785FB;
+}
+</style>
+
 </head>
 
 <body class="as-app">
@@ -84,9 +205,10 @@
         alt="Paharo">
       <div class="as-container as-container--scrollable">
         <p class="as-title">Tamaño del páharo</p>
-        <as-range-slider min-value="10" max-value="50" value="20" id="js-size"></as-range-slider>
+        <input type="range" id="js-size" min="10" max="50" value="20" step="1">
+
         <p class="as-title">Esperanza de vida</p>
-        <as-range-slider min-value="0" max-value="100" value="50" id="js-ttl"></as-range-slider>
+        <input type="range" id="js-ttl" min="1" max="100" value="50" step="1">
         <p class="as-title">Color del páharo</p>
         <div class="color-container">
           <span data-color="79 178 134" class="color color-1"></span>

@@ -81,11 +81,11 @@ document.querySelectorAll('span[data-color]').forEach(element => {
 });
 
 document.querySelector('#js-size').addEventListener('change', e => {
-  SIZE = e.detail[0];
+  SIZE = e.target.value;
 })
 
 document.querySelector('#js-ttl').addEventListener('change', e => {
-  TTL = e.detail[0];
+  TTL =  e.target.value;
 })
 
 function moveBird(bird) {
@@ -98,7 +98,6 @@ function moveBird(bird) {
 }
 
 function addBird(latlng) {
-  console.log(TTL);
   const bird = {
     id: `${USERNAME}-${ID++}`.hashCode(),
     lat: latlng.lat,
