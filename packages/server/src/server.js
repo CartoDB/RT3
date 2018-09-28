@@ -11,7 +11,7 @@ const ACTION_DELETE = 'delete';
 
 module.exports = function () {
     const server = new http.createServer();
-    const wss = new WebSocket.Server({ server, verifyClient, perMessageDeflate:true });
+    const wss = new WebSocket.Server({ server, verifyClient, perMessageDeflate: true });
 
     wss.broadcast = function broadcast(data) {
         wss.clients.forEach(async function each(client) {
@@ -26,39 +26,41 @@ module.exports = function () {
         const ip = req.connection.remoteAddress;
         debug(`new client - ${ip}`);
 
-        const {map, mapMetatada} = getMap(req.url);
-        if(!map || !mapMetatada) {
+        const { map, mapMetatada } = getMap(req.url);
+        if (!map || !mapMetatada) {
             return ws.terminate();
         }
 
-        ws.on('message', function incoming(point) {
-            point = parseNewPoint(point);
+        ws.on('message', function incoming(message) {
+            message = parseNewMessage(message);
+
+            if (isAReadyMessage(message)) {
+                // send current state
+                async function sendCurrentStatePromise() {
+                    const currentState = await redis.getCurrentState(map);
+                    if (currentState) {
+                        return await Promise.all(currentState.map(point => send(ws, JSON.parse(point))));
+                    }
+                }
+
+                return ws._sendingCurrentStatePromise = sendCurrentStatePromise();
+            }
 
             // validate point
-            if (!validateNewPoint(point)) {
-                debug('error: validation failed', point)
+            if (!validateNewPoint(message)) {
+                debug('error::validation', message)
                 return;
             }
 
             // Broadcast to everyone else
-            wss.broadcast(point);
+            wss.broadcast(message);
 
             // send to redis
-            redis.savePoint(map, point.id, point);
+            redis.savePoint(map, message.id, message);
         });
 
         // send map metadata
         send(ws, { type: 'meta', data: mapMetatada });
-
-        // send current state
-        async function sendCurrentStatePromise() {
-            const currentState = await redis.getCurrentState(map);
-            if (currentState) {
-                return await Promise.all(currentState.map(point => send(ws, JSON.parse(point))));
-            }
-        }
-
-        ws._sendingCurrentStatePromise = sendCurrentStatePromise();
     });
 
     return server;
@@ -91,7 +93,7 @@ function error(error, ws) {
     }
 }
 
-function parseNewPoint(point) {
+function parseNewMessage(point) {
     if (!point || typeof point !== 'string') {
         return;
     }
@@ -101,6 +103,12 @@ function parseNewPoint(point) {
     } catch (error) {
         return;
     }
+}
+
+function isAReadyMessage(message) {
+    return typeof message == 'object' &&
+        message.type &&
+        message.type == 'ready'
 }
 
 function validateNewPoint(point) {

@@ -20,6 +20,7 @@
   <link href="https://carto.com/developers/carto-js/examples/maps/public/style.css" rel="stylesheet">
   <!-- / CARTO.js -->
   <script src="./noise.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Indie+Flower" rel="stylesheet">
   <style>
     .color-container {
       display: flex;
@@ -32,6 +33,7 @@
       flex: 1 1 100px;
       display: inline-block;
       cursor: pointer;
+      border-radius: 2px;
     }
 
     .color-1 {
@@ -43,18 +45,43 @@
     }
 
     .color-3 {
-      background: rgb(128, 35, 146);
+      background: rgb(238, 132, 52);
     }
 
     .color-4 {
-      background: rgb(28, 31, 51);
+      background: rgb(134, 147, 171);
+    }
+    .color-5{
+      background: rgb(232, 226, 136);
+    }
+    .color-6 {
+      background: rgb(135, 168, 120);
+    }
+
+    .logo {
+      position: relative;
+      top: -18px;
+      width: 100%;
+    }
+
+    .as-title {
+      font-family: 'Indie Flower', cursive;
+    }
+
+    .as-display {
+      font-family: 'Indie Flower', cursive;
+      margin: 0;
+      text-align: center;
     }
   </style>
 </head>
 
 <body class="as-app">
   <as-responsive-content>
-    <aside class="as-sidebar as-sidebar--left as-p--16">
+    <aside data-name="Menu" class="as-sidebar as-sidebar--left as-p--16">
+      <p class="as-display">PáHAROS</p>
+      <img class="logo" src="https://pbs.twimg.com/profile_images/378800000420673368/808517428594aef614d517b272c87e93_400x400.png"
+        alt="Paharo">
       <div class="as-container as-container--scrollable">
         <p class="as-title">Tamaño del páharo</p>
         <as-range-slider min-value="10" max-value="50" value="20" id="js-size"></as-range-slider>
@@ -64,8 +91,10 @@
         <div class="color-container">
           <span data-color="79 178 134" class="color color-1"></span>
           <span data-color="201 66 119" class="color color-2"></span>
-          <span data-color="128 35 146" class="color  color-3"></span>
-          <span data-color="28 31 51" class="color  color-4"></span>
+          <span data-color="238 132 52" class="color  color-3"></span>
+          <span data-color="134 147 171" class="color  color-4"></span>
+          <span data-color="232 226 136" class="color color-5"></span>
+          <span data-color="135 168 120" class="color color-6"></span>
         </div>
       </div>
     </aside>

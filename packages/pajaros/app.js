@@ -38,6 +38,7 @@ responsiveContent.addEventListener('ready', () => {
     zoomControl: false
   }).setView([30, 0], 3);
   map.scrollWheelZoom.disable();
+  map.doubleClickZoom.disable();
 
   L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}.png', {
     maxZoom: 18
@@ -53,7 +54,9 @@ responsiveContent.addEventListener('ready', () => {
   USERNAME = prompt('Como te llamas?', `pajaro-${makeid()}`);
 
   map.on('click', function (e) {
-    addBird(e.latlng);
+    for (let i = 0; i < 5; i++) {
+      setImmediate(addBird(e.latlng));
+    }
   });
 
 
