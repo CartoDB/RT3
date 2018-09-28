@@ -24,9 +24,9 @@ class RT3Producer {
 let ID = 0;
 const birds = [];
 let USERNAME;
-let R = 0;
-let G = 0;
-let B = 0;
+let R = parseInt(Math.random() * 256);
+let G = parseInt(Math.random() * 256);
+let B = parseInt(Math.random() * 256);
 let SIZE = 30;
 let TTL = 50;
 
@@ -81,11 +81,11 @@ document.querySelectorAll('span[data-color]').forEach(element => {
 });
 
 document.querySelector('#js-size').addEventListener('change', e => {
-  SIZE = e.detail[0];
+  SIZE = e.target.value;
 })
 
 document.querySelector('#js-ttl').addEventListener('change', e => {
-  TTL = e.detail[0];
+  TTL =  e.target.value;
 })
 
 function moveBird(bird) {
@@ -98,9 +98,8 @@ function moveBird(bird) {
 }
 
 function addBird(latlng) {
-  console.log(TTL);
   const bird = {
-    id: `${USERNAME}-${ID++}`.hashCode(),
+    id: parseInt(Math.random() * 10000),
     lat: latlng.lat,
     lon: latlng.lng,
     data: {
