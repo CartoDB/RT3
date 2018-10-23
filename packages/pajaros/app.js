@@ -31,7 +31,7 @@ let SIZE = 30;
 let TTL = 50;
 
 const responsiveContent = document.querySelector('as-responsive-content');
-const rt3Producer = new RT3Producer('ws://10.0.32.102:3333/birds?api_key=1234')
+const rt3Producer = new RT3Producer('ws://localhost:3333/birds?api_key=1234')
 
 responsiveContent.addEventListener('ready', () => {
   const map = L.map('map', {
